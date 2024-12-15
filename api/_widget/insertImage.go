@@ -1,5 +1,0 @@
-package widget
-
-func InsertImage() {
-
-}
