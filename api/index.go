@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"io"
+	"image/jpeg"
 	"net/http"
 
+	"github.com/Mateus-MS/Duo-Widget/utils"
 	gee "github.com/tbxark/g4vercel"
 )
 
@@ -11,18 +12,21 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	server := gee.New()
 
 	server.GET("/api", func(context *gee.Context) {
-		imageURL := "https://duo-widget.vercel.app/images/test.jpg"
-
-		resp, err := http.Get(imageURL)
+		img, err := utils.QueryImage("test.jpg")
 		if err != nil {
-			context.JSON(500, gee.H{"error": "Failed to fetch image"})
+			context.Writer.WriteHeader(http.StatusBadRequest)
+			context.JSON(http.StatusBadRequest, gee.H{"error": "Failed to fetch image"})
 			return
 		}
-		defer resp.Body.Close()
 
-		context.Writer.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
+		context.Writer.Header().Set("Content-Type", "image/jpeg")
 
-		io.Copy(context.Writer, resp.Body)
+		err = jpeg.Encode(context.Writer, img, nil)
+		if err != nil {
+			context.Writer.WriteHeader(http.StatusInternalServerError)
+			context.JSON(500, gee.H{"error": "Failed to encode image"})
+			return
+		}
 	})
 
 	server.Handle(w, r)
