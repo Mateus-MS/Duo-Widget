@@ -4,7 +4,7 @@ import (
 	"image/jpeg"
 	"net/http"
 
-	"github.com/Mateus-MS/Duo-Widget/utils"
+	utils "github.com/Mateus-MS/Duo-Widget/_utils"
 	gee "github.com/tbxark/g4vercel"
 )
 
