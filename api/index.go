@@ -14,6 +14,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	server.GET("/api", func(context *gee.Context) {
 
+		// Get mood parameter
 		mood, err := utils.QueryFromURL("mood", r)
 		if err != nil {
 			context.Writer.WriteHeader(http.StatusBadRequest)
@@ -21,6 +22,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Get the image referenced to the mood
 		moodReference := utils.GetMood(mood)
 		img, err := utils.QueryImage(fmt.Sprintf("d%s.jpg", moodReference))
 		if err != nil {
@@ -29,8 +31,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		context.Writer.Header().Set("Content-Type", "image/jpeg")
-
+		// Encode the image to send back
 		err = jpeg.Encode(context.Writer, img, nil)
 		if err != nil {
 			context.Writer.WriteHeader(http.StatusInternalServerError)
@@ -45,6 +46,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		context.Writer.Header().Set("Streak", utils.QueryStreak(userID))
+
+		context.Writer.Header().Set("Content-Type", "image/jpeg")
 
 	})
 
