@@ -41,7 +41,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			context.JSON(http.StatusBadRequest, gee.H{"error": "Failed to get streak"})
 			return
 		}
-		widget.InsertLabel(&ConvertToRGBA(img), utils.QueryStreak(userID))
+		widget.InsertLabel(ConvertToRGBA(img), utils.QueryStreak(userID))
 
 		// Encode the image to send back
 		err = jpeg.Encode(context.Writer, img, nil)
