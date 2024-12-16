@@ -17,8 +17,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		// Get mood parameter
 		mood, err := utils.QueryFromURL("mood", r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
+			// No mood passed
+			// Continue with default
+			mood = "happy"
 		}
 
 		// Get userID parameter
