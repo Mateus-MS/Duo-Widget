@@ -31,10 +31,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Get the image referenced to the mood
-		img, _ := widget.CreateWidget(utils.GetMood(mood))
-
-		// Add the days streak text into the image
-		w.Header().Set("Streak", utils.QueryStreak(userID))
+		img, _ := widget.CreateWidget(utils.GetMood(mood), utils.QueryStreak(userID))
 
 		// Encode the image to send back
 		err = jpeg.Encode(context.Writer, img, nil)
