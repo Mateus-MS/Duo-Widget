@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"image/jpeg"
+	"image/png"
 	"net/http"
 
 	utils "github.com/Mateus-MS/Duo-Widget/_utils"
@@ -17,16 +17,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		// Get mood parameter
 		mood, err := utils.QueryFromURL("mood", r)
 		if err != nil {
-			context.Writer.WriteHeader(http.StatusBadRequest)
-			context.JSON(http.StatusBadRequest, gee.H{"error": "No mood passed"})
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		// Get userID parameter
 		userID, err := utils.QueryFromURL("userID", r)
 		if err != nil {
-			context.Writer.WriteHeader(http.StatusBadRequest)
-			context.JSON(http.StatusBadRequest, gee.H{"error": "No userID passed"})
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
@@ -34,10 +32,11 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		img, _ := widget.CreateWidget(utils.GetMood(mood), utils.QueryStreak(userID))
 
 		// Encode the image to send back
-		err = jpeg.Encode(context.Writer, img, nil)
+		w.Header().Set("Content-Type", "image/png")
+
+		err = png.Encode(context.Writer, img)
 		if err != nil {
-			context.Writer.WriteHeader(http.StatusInternalServerError)
-			context.JSON(500, gee.H{"error": "Failed to encode image"})
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
