@@ -1,9 +1,6 @@
 package handler
 
 import (
-	"fmt"
-	"image"
-	"image/draw"
 	"image/jpeg"
 	"net/http"
 
@@ -25,23 +22,19 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Get the image referenced to the mood
-		moodReference := utils.GetMood(mood)
-		img, err := utils.QueryImage(fmt.Sprintf("d%s.jpg", moodReference))
-		if err != nil {
-			context.Writer.WriteHeader(http.StatusBadRequest)
-			context.JSON(http.StatusBadRequest, gee.H{"error": "Failed to fetch image"})
-			return
-		}
-
-		// Add the days streak text into the image
+		// Get userID parameter
 		userID, err := utils.QueryFromURL("userID", r)
 		if err != nil {
 			context.Writer.WriteHeader(http.StatusBadRequest)
-			context.JSON(http.StatusBadRequest, gee.H{"error": "Failed to get streak"})
+			context.JSON(http.StatusBadRequest, gee.H{"error": "No userID passed"})
 			return
 		}
-		widget.InsertLabel(ConvertToRGBA(img), utils.QueryStreak(userID))
+
+		// Get the image referenced to the mood
+		img, _ := widget.CreateWidget(utils.GetMood(mood))
+
+		// Add the days streak text into the image
+		w.Header().Set("Streak", utils.QueryStreak(userID))
 
 		// Encode the image to send back
 		err = jpeg.Encode(context.Writer, img, nil)
@@ -54,11 +47,4 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	server.Handle(w, r)
-}
-
-func ConvertToRGBA(img image.Image) *image.RGBA {
-	bounds := img.Bounds()
-	rgba := image.NewRGBA(bounds)
-	draw.Draw(rgba, bounds, img, bounds.Min, draw.Src)
-	return rgba
 }
