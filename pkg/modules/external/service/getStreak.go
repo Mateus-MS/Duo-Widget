@@ -9,6 +9,13 @@ import (
 )
 
 func (serv *service) GetStreak(username string) (int, error) {
+	// Check if already have the data for this user in cache
+	streakInt, err := serv.repository.ReadFromCache(username)
+	if err == nil {
+		println("Getting the user data from cache")
+		return streakInt, nil
+	}
+
 	// Create the request
 	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("https://www.duolingo.com/2017-06-30/users?username=%s", username), nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0")
@@ -30,5 +37,11 @@ func (serv *service) GetStreak(username string) (int, error) {
 		return 0, err
 	}
 
-	return respData.Users[0].Streak, nil
+	streak := respData.Users[0].Streak
+
+	// Save in cache
+	serv.repository.SaveInCache(username, streak)
+
+	println("getting the data from official API")
+	return streak, nil
 }
