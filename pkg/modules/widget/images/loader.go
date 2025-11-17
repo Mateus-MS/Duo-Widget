@@ -1,29 +1,30 @@
 package widgets_images
 
 import (
+	"bytes"
+	"embed"
 	"image"
-	"os"
 	"regexp"
 
 	_ "image/jpeg"
 	_ "image/png"
 )
 
+//go:embed files/*
+var widgetFiles embed.FS
+
 type MoodRaw map[string]image.Image
 
-var staticFolderPath string = "./static/imgs/widgets"
-
-// Approximate map size: 0.45 MB
+// New loads all embedded images into a map
 func New() (*MoodRaw, error) {
 	m := make(MoodRaw)
 
-	// Get all widgets base images paths
-	entries, err := os.ReadDir(staticFolderPath)
+	// List all embedded image files
+	entries, err := widgetFiles.ReadDir("files")
 	if err != nil {
 		return nil, err
 	}
 
-	// On each widget base image
 	for _, entry := range entries {
 		fileName := entry.Name()
 
@@ -32,32 +33,24 @@ func New() (*MoodRaw, error) {
 			return nil, err
 		}
 
-		// Remove the extension
+		// Remove the extension for the map key
 		re := regexp.MustCompile(`\..*`)
 		name := re.ReplaceAllString(fileName, "")
 
 		m[name] = img
 	}
 
-	// Add the streak logo
-	// img, err := getImage("streak_logo.png")
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// m["streak_logo"] = img
-
 	return &m, nil
 }
 
+// getImage reads and decodes an image from the embedded FS
 func getImage(fileName string) (image.Image, error) {
-	data, err := os.Open(staticFolderPath + "/" + fileName)
+	data, err := widgetFiles.ReadFile("files/" + fileName)
 	if err != nil {
 		return nil, err
 	}
-	defer data.Close()
 
-	img, _, err := image.Decode(data)
+	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}

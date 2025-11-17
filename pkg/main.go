@@ -25,5 +25,5 @@ func main() {
 	widget_schedule.StartCleanCacheSchedule(widgetService)
 
 	routes.Init(router, widgetService, externalService)
-	router.Run(":9898")
+	router.Run(":8080")
 }
