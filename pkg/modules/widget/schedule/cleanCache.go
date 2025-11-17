@@ -1,4 +1,4 @@
-package widget_schedules
+package widget_schedule
 
 import (
 	"os"

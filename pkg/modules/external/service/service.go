@@ -4,6 +4,7 @@ import external_repository "github.com/Mateus-MS/Duo-Widget/modules/external/rep
 
 type Iservice interface {
 	GetStreak(string) (int, error)
+	Reset()
 }
 type service struct {
 	repository external_repository.Irepository
