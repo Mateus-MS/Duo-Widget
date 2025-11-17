@@ -1,6 +1,7 @@
 package main
 
 import (
+	external_repository "github.com/Mateus-MS/Duo-Widget/modules/external/repository/inMemory"
 	external_service "github.com/Mateus-MS/Duo-Widget/modules/external/service"
 	widgets_images "github.com/Mateus-MS/Duo-Widget/modules/widget/images"
 	widget_repository "github.com/Mateus-MS/Duo-Widget/modules/widget/repository/local"
@@ -17,7 +18,7 @@ func main() {
 		panic(err)
 	}
 
-	externalService := external_service.New()
+	externalService := external_service.New(external_repository.New())
 	widgetService := widget_service.New(widget_repository.New(), *widgetRaw, externalService)
 
 	routes.Init(router, widgetService, externalService)
