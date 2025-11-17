@@ -1,0 +1,9 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: duo-widget
+    container_name: app
+    ports:
+      - "9898:8080"

@@ -7,13 +7,20 @@ import (
 	"image/color"
 	"image/draw"
 	"image/jpeg"
-	"os"
 	"strconv"
+
+	_ "embed"
 
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"
 )
+
+//go:embed files/font.otf
+var fontBytes []byte
+
+//go:embed files/streak_logo.png
+var streakLogoBytes []byte
 
 // TODO: this works, but needs a good refactor
 
@@ -45,7 +52,8 @@ func (serv *service) Serve(username, mood string) ([]byte, error) {
 	draw.Draw(canvas, moodRaw.Bounds(), moodRaw, image.Point{}, draw.Over)
 
 	// Insert the streak
-	insertStreak(canvas, serv.widgetRaw["streak_logo"], streak)
+	streakLogo, err := getStreakLogo()
+	insertStreak(canvas, streakLogo, streak)
 
 	// Encode as jpg
 	buf := new(bytes.Buffer)
@@ -101,34 +109,30 @@ func measureTextWidth(label string) int {
 }
 
 func getFontDrawer(img *image.RGBA, color color.Color) (*font.Drawer, error) {
-	d := &font.Drawer{}
-
-	// Open the font file
-	fontBytes, err := os.ReadFile("./static/fonts/font.otf")
-	if err != nil {
-		return d, err
-	}
-
-	// Parse the font
 	f, err := opentype.Parse(fontBytes)
 	if err != nil {
-		return d, errors.New("failed to parse font")
+		return nil, errors.New("failed to parse font")
 	}
-
-	// Create a font face
 	face, err := opentype.NewFace(f, &opentype.FaceOptions{
 		Size:    70,
 		DPI:     72,
 		Hinting: font.HintingNone,
 	})
 	if err != nil {
-		return d, errors.New("failed to create new face")
+		return nil, errors.New("failed to create face")
 	}
 
-	// Configure the drawer
-	d.Dst = img
-	d.Src = &image.Uniform{C: color}
-	d.Face = face
+	return &font.Drawer{
+		Dst:  img,
+		Src:  &image.Uniform{C: color},
+		Face: face,
+	}, nil
+}
 
-	return d, nil
+func getStreakLogo() (image.Image, error) {
+	img, _, err := image.Decode(bytes.NewReader(streakLogoBytes))
+	if err != nil {
+		return nil, err
+	}
+	return img, nil
 }
