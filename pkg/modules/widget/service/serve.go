@@ -29,6 +29,10 @@ var streakTextColor = color.RGBA{R: 255, G: 255, B: 255, A: 255}
 var imgSize = 300
 
 func (serv *service) Serve(username, mood string) ([]byte, error) {
+	if mood == "random" {
+		mood = serv.WidgetRaw.GetRandom()
+	}
+
 	streakInt, err := serv.externalService.GetStreak(username)
 	if err != nil {
 		return nil, err
@@ -48,7 +52,7 @@ func (serv *service) Serve(username, mood string) ([]byte, error) {
 	draw.Draw(canvas, canvas.Bounds(), &image.Uniform{C: bgColor}, image.Point{}, draw.Src)
 
 	// Insert the moodRaw
-	moodRaw := serv.widgetRaw[mood]
+	moodRaw := serv.WidgetRaw[mood]
 	draw.Draw(canvas, moodRaw.Bounds(), moodRaw, image.Point{}, draw.Over)
 
 	// Insert the streak

@@ -12,13 +12,13 @@ type Iservice interface {
 type service struct {
 	externalService external_service.Iservice
 	repository      widget_repository.Irepository
-	widgetRaw       widgets_images.MoodRaw
+	WidgetRaw       widgets_images.MoodRaw
 }
 
 func New(repo widget_repository.Irepository, widgetRaw widgets_images.MoodRaw, externalService external_service.Iservice) *service {
 	return &service{
 		externalService: externalService,
 		repository:      repo,
-		widgetRaw:       widgetRaw,
+		WidgetRaw:       widgetRaw,
 	}
 }
