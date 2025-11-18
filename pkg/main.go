@@ -18,11 +18,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	widget_schedule.StartHourlyMoodRotator(widgetRaw)
 
 	externalService := external_service.New(external_repository.New())
 	widgetService := widget_service.New(widget_repository.New(), *widgetRaw, externalService)
 
-	widget_schedule.StartCleanCacheSchedule(widgetService)
+	widget_schedule.StartCleanCacheSchedule()
 
 	routes.Init(router, widgetService, externalService)
 	router.Run(":8080")

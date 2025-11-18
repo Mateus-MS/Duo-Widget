@@ -11,6 +11,7 @@ import (
 
 	_ "embed"
 
+	widget_schedule "github.com/Mateus-MS/Duo-Widget/modules/widget/schedule"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"
@@ -30,7 +31,7 @@ var imgSize = 300
 
 func (serv *service) Serve(username, mood string) ([]byte, error) {
 	if mood == "random" {
-		mood = serv.WidgetRaw.GetRandom()
+		mood = widget_schedule.GetActualMood()
 	}
 
 	streakInt, err := serv.externalService.GetStreak(username)

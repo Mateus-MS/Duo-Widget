@@ -4,11 +4,10 @@ import (
 	"os"
 	"path/filepath"
 
-	widget_service "github.com/Mateus-MS/Duo-Widget/modules/widget/service"
 	"github.com/robfig/cron/v3"
 )
 
-func StartCleanCacheSchedule(widgetService widget_service.Iservice) {
+func StartCleanCacheSchedule() {
 	c := cron.New()
 
 	c.AddFunc("0 0 * * *", func() {

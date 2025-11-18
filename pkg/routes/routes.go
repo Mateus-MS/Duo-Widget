@@ -15,7 +15,7 @@ func Init(router *gin.Engine, widgetService widget_service.Iservice, externalSer
 		ctx.String(http.StatusOK, "Alive")
 	})
 
-	router.GET("/", widget_routes.WidgetRoute(widgetService))
+	router.GET("/:username/:mood", widget_routes.WidgetRoute(widgetService))
 
-	router.GET("/streak", external_routes.StreakRoute(externalService))
+	router.GET("/streak/:username", external_routes.StreakRoute(externalService))
 }
