@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"image"
+	"math/rand/v2"
 	"regexp"
 
 	_ "image/jpeg"
@@ -56,4 +57,18 @@ func getImage(fileName string) (image.Image, error) {
 	}
 
 	return img, nil
+}
+
+// TODO: make that it doesn't build the array with the keys on every call
+func (mr MoodRaw) GetRandom() string {
+	if len(mr) == 0 {
+		return ""
+	}
+
+	keys := make([]string, 0, len(mr))
+	for mood := range mr {
+		keys = append(keys, mood)
+	}
+
+	return keys[rand.IntN(len(keys))]
 }
