@@ -17,5 +17,5 @@ func Init(router *gin.Engine, widgetService widget_service.Iservice, externalSer
 
 	router.GET("/:username/:mood", widget_routes.WidgetRoute(widgetService))
 
-	router.GET("/streak", external_routes.StreakRoute(externalService))
+	router.GET("/streak/:username", external_routes.StreakRoute(externalService))
 }

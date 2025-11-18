@@ -12,7 +12,7 @@ import (
 // This is a utility route that returns only the `streak` data from official DuoLingo API
 func StreakRoute(service external_service.Iservice) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Query("username")
+		username := c.Param("username")
 		if username == "" {
 			c.AbortWithError(http.StatusBadRequest, errors.New("must provide your username"))
 			return
